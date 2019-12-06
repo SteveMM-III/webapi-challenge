@@ -34,20 +34,40 @@ Follow these steps for completing your project.
 
 Commit your code regularly and use descriptive messages. This helps both you (in case you ever need to return to old code) and your Team Lead.
 
+
+
+
+#################################################################################
 ## Self-Study/Essay Questions
 
 Demonstrate your understanding of this Sprint's concepts by answering the following free-form questions. Edit this document to include your answers after each question. Make sure to leave a blank line above and below your answer so it is clear and easy to read by your Team Lead.
 
 - [ ] Mention two parts of Express that you learned about this week.
+  
+  Routing and Middleware
+
 
 - [ ] Describe Middleware?
 
+  Middleware is an array of functions that can be used to extend the functionality of the application through modularity
+
+
 - [ ] Describe a Resource?
+
+  According to RESTful Web API, everything is a resource, but seems to be specifically referring to database operations?
+
 
 - [ ] What can the API return to help clients know if a request was successful?
 
+  status code 200 or 201 for post
+
+
 - [ ] How can we partition our application into sub-applications?
 
+  using Express Routers with each having it's own routes and middleware
+
+
+##################################################################################
 ## Minimum Viable Product
 
 - [ ] Configure an _npm script_ named _"server"_ that will execute your code using _nodemon_. Make _nodemon_ be a development time dependency only, it shouldn't be deployed to production.
