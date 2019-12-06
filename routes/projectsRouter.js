@@ -25,73 +25,69 @@ router.get( '/:id', validateProjectId, ( req, res ) => {
 } );
 
 router.get( '/:id/actions', validateProjectId, ( req, res ) => {
-  if ( req.project ) {
-    Projects.getProjectActions( req.params.id )
-      .then( actions => {
-        res.status( 200 ).json( actions );
-      } )
-      .catch( error => {
-        console.log( error );
-        res.status( 500 ).json( { error: "there was a problem retreiving the actions" } );
-      } );
-  } else {
-    res.status( 500 ).json( { error: "there was a problem retreiving the actions" } );
-  }
+  Projects.getProjectActions( req.params.id )
+    .then( actions => {
+      res.status( 200 ).json( actions );
+    } )
+    .catch( error => {
+      console.log( error );
+      res.status( 500 ).json( { error: "there was a problem retreiving the actions" } );
+    } );
 } );
 
 router.post( '/', validateProject, ( req, res ) => {
-  console.log( req.project );
-  if ( req.project ) {
-    Projects.insert( req.project )
-      .then( project => { res.status( 200 ).json( project ); } )
-      .catch( error => {
-        console.log( error );
-        res.status( 500 ).json( { error: "there was a problem posting the project" } );
-      } );
-  } else {
-    res.status( 500 ).json( { error: "there was a problem posting the project" } );
-  }
+  Projects.insert( req.project )
+    .then( project => { res.status( 200 ).json( project ); } )
+    .catch( error => {
+      console.log( error );
+      res.status( 500 ).json( { error: "there was a problem posting the project" } );
+    } );
+} );
+
+router.post( '/:id/actions', validateProjectId, validateAction, ( req, res ) => {
+  Actions.insert( { project_id: req.params.id, ...req.action } )
+    .then( action => {
+      res.status( 200 ).json( action );
+    })
+    .catch( error => {
+      console.log( error );
+      res.status( 500 ).json( { error: "there was a problem posting the action" } );
+    } );
 } );
 
 router.put( '/:id', validateProjectId, validateProject, ( req, res ) => {
-  if ( req.project ) {
-    Projects.update( req.params.id, req.project )
-      .then( project => {
-        res.status( 200 ).json( project );
-      } )
-      .catch( error => {
-        console.log( error );
-        res.status( 500 ).json( { error: "there was a problem updating the project" } );
-      } );
-  } else {
-    res.status( 500 ).json( { error: "there was a problem updating the project" } );
-  }
+  Projects.update( req.params.id, req.project )
+    .then( project => {
+      res.status( 200 ).json( project );
+    } )
+    .catch( error => {
+      console.log( error );
+      res.status( 500 ).json( { error: "there was a problem updating the project" } );
+    } );
 } );
 
 router.delete( '/:id', validateProjectId, ( req, res ) => {
-  if ( req.project ) {
-    Projects.remove( req.params.id )
-      .then( projects => {
-        res.status( 200 ).json( projects );
-      } )
-      .catch( error => {
-        console.log( error );
-        res.status( 500 ).json( { error: "there was a problem deleting the project" } );
-      } );
-  } else {
-    res.status( 500 ).json( { error: "there was a problem deleting the project" } );
-  }
+  Projects.remove( req.params.id )
+    .then( projects => {
+      res.status( 200 ).json( projects );
+    } )
+    .catch( error => {
+      console.log( error );
+      res.status( 500 ).json( { error: "there was a problem deleting the project" } );
+    } );
 } );
 
 //==========================================================================================
-
-
 function validateProjectId( req, res, next ) {
   Projects.get( req.params.id )
-  .then( project => {
-    if ( project ) { req.project = project; next(); }
-    else { res.status( 400 ).json( { message: "invalid project id" } ); }
-  } );
+    .then( project => {
+      if ( project ) { req.project = project; next(); }
+      else { res.status( 400 ).json( { message: "invalid project id" } ); }
+    } )
+    .catch( error => {
+      console.log( error );
+      res.status( 500 ).json( { error: "error validating project id" } );
+    } );
 }
 
 function validateProject( req, res, next ) {
@@ -107,11 +103,12 @@ function validateProject( req, res, next ) {
 
 function validateAction( req, res, next ) {
   const userData = req.body;
+  userData.project_id = req.params.id;
 
   if ( userData ) {
     if( userData.project_id ) {
-      if ( userdata.description ) {
-        if ( userData.notes ) { next(); }
+      if ( userData.description ) {
+        if ( userData.notes ) { req.action = userData; next(); }
         else { res.status( 400 ).json( { message: "missing required notes field" } ); } }
       else { res.status( 400 ).json( { message: "missing required description field" } ); } }
     else { res.status( 400 ).json( { message: "missing required project_id field" } ); } }
