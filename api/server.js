@@ -11,6 +11,13 @@ function logger( req, res, next ) {
   next();
 }
 
+server.get('/', ( req, res ) => {
+  res.send(`
+    <h2>Lambda Web API Sprint Challenge</h>
+    <p>Welcome to the Web API</p>
+  `);
+});
+
 server.use( helmet() );
 server.use( express.json() );
 server.use( logger );
